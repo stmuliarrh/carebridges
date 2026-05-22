@@ -1,4 +1,4 @@
-import pool from './db.js';
+import { pool, maskedUrl } from './db.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
@@ -69,7 +69,12 @@ export async function handler(event, context) {
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: 'Internal Server Error', details: error.message })
+      body: JSON.stringify({
+        error: 'Database Connection or Query Error',
+        details: error.message,
+        database_url: maskedUrl
+      })
     };
   }
 }
+

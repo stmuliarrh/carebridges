@@ -30,9 +30,24 @@ export default function Login({ setAuth }) {
         body: JSON.stringify({ email, password })
       });
 
-      const data = await response.json();
+      let data = {};
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        data = { error: text || `HTTP Error ${response.status}` };
+      }
+
       if (!response.ok) {
-        throw new Error(data.error || 'Autentikasi gagal.');
+        let msg = data.error || 'Autentikasi gagal.';
+        if (data.details) {
+          msg += ` (${data.details})`;
+        }
+        if (data.database_url) {
+          msg += ` [DB URL: ${data.database_url}]`;
+        }
+        throw new Error(msg);
       }
 
       // Save token & user state
