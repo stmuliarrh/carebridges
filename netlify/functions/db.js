@@ -2,7 +2,11 @@ import pg from 'pg';
 
 const { Pool } = pg;
 
-const connectionString = process.env.DATABASE_URL || "postgresql://neondb_owner:npg_vpqGOt1DCUf4@ep-bold-mud-ap8ck6da-pooler.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require";
+const rawUrl = process.env.DATABASE_URL;
+const connectionString = (rawUrl && rawUrl !== 'undefined' && rawUrl.trim() !== '')
+  ? rawUrl
+  : "postgresql://neondb_owner:npg_vpqGOt1DCUf4@ep-bold-mud-ap8ck6da-pooler.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require";
+
 
 let maskedUrl = "unknown";
 try {
@@ -20,5 +24,5 @@ const pool = new Pool({
 });
 
 export { pool, maskedUrl };
-export default pool;
+
 
